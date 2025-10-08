@@ -1,0 +1,15 @@
+# Drop columns with too many missing values
+threshold = 0.5  # remove columns with more than 50% missing
+df_cleaned = df.loc[:, df.isnull().mean() < threshold]
+
+# Convert publish_time to datetime
+df_cleaned['publish_time'] = pd.to_datetime(df_cleaned['publish_time'], errors='coerce')
+
+# Drop rows with no publish_time or title
+df_cleaned = df_cleaned.dropna(subset=['publish_time', 'title'])
+
+# Extract year
+df_cleaned['year'] = df_cleaned['publish_time'].dt.year
+
+# Add abstract word count
+df_cleaned['abstract_word_count'] = df_cleaned['abstract'].fillna('').apply(lambda x: len(x.split()))
